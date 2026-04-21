@@ -5,7 +5,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
-import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -171,7 +170,7 @@ public class UploadController {
 			e.printStackTrace();
 		}
 		HttpHeaders headers = new HttpHeaders();
-		headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
+		headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
 		return new ResponseEntity<String>("삭제되었습니다.", headers, HttpStatus.OK);
 		
 	}
