@@ -1,0 +1,22 @@
+version: '3.8' # 파일 형식 버전
+
+services:
+  my-oracle:          # 서비스 이름 (본인이 정하는 것)
+    image: gvenzl/oracle-xe
+    container_name: oracle21 # 컨테이너 이름
+    ports:
+      - "1521:1521"   # [내 컴퓨터 포트]:[도커 포트]
+    environment:
+      - ORACLE_PASSWORD=1234 # 비밀번호 설정
+    restart: always   # 컴퓨터 껐다 켜면 자동으로 다시 실행
+
+#3. 실행은 어떻게 하나요?
+# 터미널에서 해당 폴더로 이동한 뒤 딱 이 명령어만 치면 됩니다.
+
+#실행: docker-compose up -d (알아서 이미지 받고 컨테이너 띄워줍니다.)
+
+#중지: docker-compose stop (데이터는 유지하고 잠깐 끕니다.)
+
+#삭제: docker-compose down (컨테이너 자체를 삭제합니다.)
+
+#노트북에서 docker-compose up -d만 치면, 비밀번호나 포트 설정 다시 할 필요 없이 데스크톱과 똑같은 오라클 환경이 바로 만들어집니다.

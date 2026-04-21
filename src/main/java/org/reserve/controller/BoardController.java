@@ -5,6 +5,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Collections;
 
 import org.reserve.domain.BoardAttachVO;
 import org.reserve.domain.Criteria;
@@ -41,9 +42,16 @@ public class BoardController {
 	//게시글 리스트
 	@GetMapping("/review")
 	public void review(Criteria cri, Model model) {
-		model.addAttribute("list", service.getList(cri));
-		int total = service.getTotal(cri);
-		model.addAttribute("pageMaker", new PageDTO(cri, total));
+		try {
+			model.addAttribute("list", service.getList(cri));
+			int total = service.getTotal(cri);
+			model.addAttribute("pageMaker", new PageDTO(cri, total));
+		} catch (RuntimeException e) {
+			log.warn("Failed to load board list; returning empty list.", e);
+			model.addAttribute("list", Collections.emptyList());
+			model.addAttribute("pageMaker", new PageDTO(cri, 0));
+			model.addAttribute("boardError", "게시판 테이블이 준비되지 않아 목록을 불러올 수 없습니다.");
+		}
 	}
 	//게시글 등록 페이지
 	@GetMapping("/register")
@@ -98,7 +106,7 @@ public class BoardController {
 		return "redirect:/board/review";
 	}
 	//특정 게시물 번호의 첨부파일과 관련돈 데이터를 json으로 반환하는 메소드
-	@GetMapping(value="/getAttachList", produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
+	@GetMapping(value="/getAttachList", produces=MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	public ResponseEntity<List<BoardAttachVO>> getAttachList(int bno){
 		return new ResponseEntity<>(service.getAttachList(bno), HttpStatus.OK);
