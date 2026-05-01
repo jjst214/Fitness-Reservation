@@ -110,7 +110,7 @@ public class ReserveController {
 		}
 		service.addReserve(rvos, pvos);
 		
-		return "redirect: /";
+		return "redirect:/";
 	}
 	
 	@GetMapping("/myreserve")

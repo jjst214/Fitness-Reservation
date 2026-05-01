@@ -338,3 +338,40 @@ textarea{ resize:none; }
 .view-res-tb th:nth-child(6){
 	width:80px;
 }
+
+/* 게시글 상세 - 본문 이미지 */
+#content_image {
+	width: 100%;
+	overflow: hidden;
+}
+#content_image img {
+	max-width: 100%;
+	height: auto;
+	display: block;
+	margin: 8px 0;
+	border-radius: 6px;
+}
+
+/* 게시글 상세 - 첨부사진 썸네일 목록 */
+.uploadResult ul {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 10px;
+	list-style: none;
+	padding: 10px 0;
+	margin: 0;
+}
+.uploadResult ul li {
+	cursor: pointer;
+}
+.uploadResult ul li img {
+	width: 150px;
+	height: 150px;
+	object-fit: cover;
+	border-radius: 6px;
+	border: 1px solid #ddd;
+	transition: opacity 0.2s;
+}
+.uploadResult ul li img:hover {
+	opacity: 0.8;
+}

@@ -19,13 +19,14 @@
 				<tr>
 					<th><label class="sign-up txt">아이디</label></th>
 					<td>
-						<div class="sign-up id form">
-						<input type="text" id="id" name="mid" onkeyup="checkReg(event)"/>
-						<input type="hidden" name="id_chk" value="false"/>
-						<!-- id ajax 중복체크 -->
-						<span class="id_ok">사용 가능한 아이디입니다.</span>
-						<span class="id_already">이미 사용중인 아이디입니다.</span>
-						</div>
+					<div class="sign-up id form">
+					<input type="text" id="id" name="mid" onkeyup="checkReg(event); resetIdChk();"/>
+					<button type="button" id="idCheckBtn" onclick="doIdCheck()">중복확인</button>
+					<input type="hidden" name="id_chk" value="false"/>
+					<!-- id ajax 중복체크 -->
+					<span class="id_ok">사용 가능한 아이디입니다.</span>
+					<span class="id_already">이미 사용중인 아이디입니다.</span>
+					</div>
 					</td>
 				</tr>
 				<tr>
@@ -197,6 +198,48 @@ function checkReg(event){
 		del.value = del.value.replace(idRegExp, '');
 	}
 }
+function resetIdChk(){
+	$('input[name="id_chk"]').val("false");
+	$('.id_ok').css('display', 'none');
+	$('.id_already').css('display', 'none');
+}
+function doIdCheck(){
+	let csrfHeaderName = "${_csrf.headerName}";
+	let csrfTokenValue = "${_csrf.token}";
+	let inputFile = $("input[name='mid']");
+	if(inputFile.val() == "" || inputFile.val() == null){
+		alert("아이디를 입력하세요.");
+		inputFile.focus();
+		return;
+	}
+	let formData = new FormData();
+	formData.append("mid", inputFile.val());
+	$.ajax({
+		url: '${ctx}/member/idCheck',
+		processData: false,
+		contentType: false,
+		beforeSend: function(xhr){
+			xhr.setRequestHeader(csrfHeaderName, csrfTokenValue);
+		},
+		data: formData,
+		type: 'POST',
+		dataType: 'json',
+		success: function(result){
+			if(result.result == 'true'){
+				$('.id_ok').css('display', 'block');
+				$('.id_already').css('display', 'none');
+				$('input[name="id_chk"]').val("true");
+			}else{
+				$('.id_ok').css('display', 'none');
+				$('.id_already').css('display', 'block');
+				$('input[name="id_chk"]').val("false");
+			}
+		},
+		error: function(){
+			alert("아이디 중복확인 중 오류가 발생했습니다.");
+		}
+	});
+}
 function phoneCheckReg(event){
 	const RegExp = /[^0-9]/g;
 	const del = event.target;
@@ -216,9 +259,6 @@ function email_chk(val){
 }
 
 $(document).ready(function(){
-	//요소의 변경이 있으면 콜백함수실행 
-	let csrfHeaderName = "${_csrf.headerName}";
-	let csrfTokenValue = "${_csrf.token}";
 	//비밀번호 재확인 함수
 	$("input[name='mpwChk']").change(function(){
 		const value = $('input[name="mpwChk"]').val();
@@ -252,41 +292,6 @@ $(document).ready(function(){
 				$('.pw_mismatch').css('display', 'block');
 			}	
 		}
-	});
-	$("input[name='mid']").change(function(){
-		//가상의 폼을 생성(폼태그)
-		let formData = new FormData();
-		let inputFile = $("input[name='mid']");
-		formData.append("mid", $(this).val());
-		
-		$.ajax({
-			url: '${ctx}/member/idCheck',
-			processData : false,
-			contentType: false,
-			beforeSend:function(xhr){
-				xhr.setRequestHeader(csrfHeaderName, csrfTokenValue);
-			},
-			data: formData,
-			type: 'POST',
-			dataType: 'json',
-			success : function(result){
-				if(inputFile.val() == "" || inputFile.val() == null){
-					$('.id_ok').css('display', 'none');
-					$('.id_already').css('display', 'none');
-					$('input[name="id_chk"]').attr("value", "false");
-				}else{
-					if(result.result == 'true'){
-						$('.id_ok').css('display', 'block');
-						$('.id_already').css('display', 'none');
-						$('input[name="id_chk"]').attr("value", "true");
-					}else if(result.result == 'false'){
-						$('.id_ok').css('display', 'none');
-						$('.id_already').css('display', 'block');
-						$('input[name="id_chk"]').attr("value", "false");
-					}	
-				}
-			}
-		})
 	});
 });
 function sample6_execDaumPostcode() {
